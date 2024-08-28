@@ -117,7 +117,7 @@
         hostname: "{{ item.public_dns_name }}"  # This uses the public DNS name of the instance
         ansible_ssh_private_key_file: ./mykey.pem
         ansible_user: ubuntu 
-        groupname: jenkins_server
+        groupname: docker_server
       with_items: "{{ ec2.instances }}"
       when: ec2.instances is defined and ec2.instances | length > 0
 
