@@ -70,7 +70,7 @@ jobs:
         eb init -p docker apexapp --region ${{ env.AWS_REGION }}
 
         # Create Elastic Beanstalk environment (replace with your environment name)
-        eb create apex-app-env
+        eb create apex-app-test-env
 
         # Deploy the latest image from Docker Hub to Elastic Beanstalk
         eb deploy
