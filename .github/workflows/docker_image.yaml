@@ -59,8 +59,8 @@ jobs:
       run: |
         BUILD_NUMBER=${{ github.run_number }}
         docker-compose -f docker-compose.yaml build
-        docker tag apexapp_apexapp:latest ${{ env.DOCKER_HUB_USERNAME }}/apexapp:$BUILD_NUMBER
-        docker tag apexapp_apexapp:latest ${{ env.DOCKER_HUB_USERNAME }}/apexapp:latest
+        docker tag oluty/apexapp:latest ${{ env.DOCKER_HUB_USERNAME }}/apexapp:$BUILD_NUMBER
+        docker tag oluty/apexapp:latest ${{ env.DOCKER_HUB_USERNAME }}/apexapp:latest
         echo "BUILD_NUMBER=$BUILD_NUMBER" >> $GITHUB_ENV
 
     - name: Push Docker image
