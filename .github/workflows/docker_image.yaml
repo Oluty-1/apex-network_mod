@@ -25,7 +25,7 @@ env:
 
 jobs:
   build:
-    name: "Apply source code changes"
+    name: "Build, Push, and Deploy Docker Image"
     runs-on: ubuntu-latest
 
     steps:
@@ -46,31 +46,40 @@ jobs:
     - name: Log in to Docker Hub
       uses: docker/login-action@v3
       with:
-        username: ${{ DOCKER_HUB_USERNAME }}
-        password: ${{ DOCKER_HUB_ACCESS_TOKEN }}
+        username: ${{ env.DOCKER_HUB_USERNAME }}
+        password: ${{ env.DOCKER_HUB_ACCESS_TOKEN }}
 
-    - name: Build and tag Docker image
+    - name: Install Docker Compose
+      run: |
+        sudo curl -L "https://github.com/docker/compose/releases/download/$(curl -s https://api.github.com/repos/docker/compose/releases/latest | jq -r .tag_name)/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+        sudo chmod +x /usr/local/bin/docker-compose
+
+    - name: Build and tag Docker image using Docker Compose
       id: build
       run: |
         BUILD_NUMBER=${{ github.run_number }}
-        docker build -t ${{ DOCKER_HUB_USERNAME }}/apexapp:$BUILD_NUMBER -t ${{ DOCKER_HUB_USERNAME }}/apexapp:latest -f Docker-files/app/Dockerfile .
+        docker-compose -f docker-compose.yml build
+        docker tag apexapp_apexapp:latest ${{ env.DOCKER_HUB_USERNAME }}/apexapp:$BUILD_NUMBER
+        docker tag apexapp_apexapp:latest ${{ env.DOCKER_HUB_USERNAME }}/apexapp:latest
         echo "BUILD_NUMBER=$BUILD_NUMBER" >> $GITHUB_ENV
 
     - name: Push Docker image
       run: |
-        docker push ${{ DOCKER_HUB_USERNAME }}/apexapp:${{ env.BUILD_NUMBER }}
-        docker push ${{ 1DOCKER_HUB_USERNAME }}/apexapp:latest
-    
-    - name: Deploy to Elastic Beanstalk
+        docker push ${{ env.DOCKER_HUB_USERNAME }}/apexapp:${{ env.BUILD_NUMBER }}
+        docker push ${{ env.DOCKER_HUB_USERNAME }}/apexapp:latest
+
+    - name: Install Elastic Beanstalk CLI
       run: |
-        # Install Elastic Beanstalk CLI
         pip install --user awsebcli
 
-        # Initialize Elastic Beanstalk application
+    - name: Initialize Elastic Beanstalk
+      run: |
         eb init -p docker apexapp --region ${{ env.AWS_REGION }}
 
-        # Create Elastic Beanstalk environment (replace with your environment name)
-        eb create apex-app-test-env
-
-        # Deploy the latest image from Docker Hub to Elastic Beanstalk
-        eb deploy
+    - name: Deploy to Elastic Beanstalk
+      run: |
+        if eb status apex-app-env; then
+          eb deploy apex-app-env
+        else
+          eb create apex-app-env
+        fi
