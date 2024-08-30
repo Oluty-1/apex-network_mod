@@ -1,15 +1,19 @@
 # Step 1: Build the Go application
 FROM golang:1.20-alpine AS build_image
 
-# RUN sudo apt install git
-# RUN git clone https://github.com/Oluty-1/apex-network_mod.git
-# RUN git checkout CI/CD
+# Install git
+RUN apk add --no-cache git
+
+# Clone the repository
+RUN git clone https://github.com/Oluty-1/apex-network_mod.git /build/apex-network_mod
+WORKDIR /build/apex-network_mod
+RUN git checkout CI/CD-EBS
+
 LABEL "Project"="Apex_Network"
 LABEL "Author"="Tejiri"
-# Set the working directory inside the container
-WORKDIR /build
 
-# Copy the Go source code into the container
+
+# Copy Go module files
 COPY src/go.mod .
 COPY src/ .
 COPY .env .
