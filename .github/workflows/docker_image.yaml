@@ -21,9 +21,9 @@ env:
   AWS_REGION: us-east-2
   # ECS-specific variables
   ECS_CLUSTER: apex
-  ECS_SERVICE: your-ecs-service-name
-  ECS_TASK_DEFINITION: your-ecs-task-def-name
-  CONTAINER_NAME: your-container-name
+  ECS_SERVICE: apexappsvc
+  ECS_TASK_DEFINITION: apexapptask
+  CONTAINER_NAME: apexapp
   # # Environment variables for Docker Compose
   # PORT: ${{ secrets.PORT }}
   # DB_URL: ${{ secrets.DB_URL }}
