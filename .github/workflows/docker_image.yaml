@@ -20,7 +20,7 @@ env:
   # AWS region
   AWS_REGION: us-east-2
   # ECS-specific variables
-  ECS_CLUSTER: your-ecs-cluster-name
+  ECS_CLUSTER: apex
   ECS_SERVICE: your-ecs-service-name
   ECS_TASK_DEFINITION: your-ecs-task-def-name
   CONTAINER_NAME: your-container-name
@@ -88,8 +88,8 @@ jobs:
               \"essential\": true,
               \"portMappings\": [
                 {
-                  \"containerPort\": 80,
-                  \"hostPort\": 80
+                  \"containerPort\": 3000,
+                  \"hostPort\": 3000
                 }
               ]
             }
